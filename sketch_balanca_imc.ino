@@ -1,5 +1,3 @@
-
-
 /************************************************
 * Projeto: Balança para Calculo de IMC (v1.0)   *
 * Curso: Ciência da Computação / CCO6NA         *
@@ -7,22 +5,32 @@
 * Universidade dos Guararapes                   *
 * Licença: MIT                                  *
 *************************************************/
-#include <VL53L0X.h>
-#include <HX711.h> //lib da balança
+
 #include <Wire.h> //lib para dispositivos I2C
+#include <PushButton.h>
+#include <HX711.h> //lib da balança
+#include <VL53L0X.h> //lib do laser
 #include <LiquidCrystal_I2C.h> //lib do display
 
+/*Configuração dos Pinos*/ 
+#define pin_sck 2 // SCK (HX711)
+#define pin_dt 3 //  DT (HX711)
+#define pin_btn 4 // Botao
+
 /* Presets da Balança */
-HX711 escala; //declaracao do objeto escala na classe HX711 da biblioteca
+#define tempo_espera 1000 //constante de espera
+#define fator_calibracao -24830.0f //constante do fator de calibracao
 
-//configuracao dos pinos para o modulo HX711
-const int pin_sck = 2;
-const int pin_dt = 3;
-const int tempo_espera = 2000; //variavel de espera
-float fator_calibracao = -24830; //pre-definicao da variavel de calibracao
+/* INSTANCIANDO OS OBJETOS */
+HX711 scale; //escala
+LiquidCrystal_I2C lcd(0x27, 16, 2); //lcd (display 16(lines)x 2(cols)) porta de comunicação 0x27
+VL53L0X laser; //laser
+PushButton botao(pin_btn);
 
-/* Presets do Display */
-LiquidCrystal_I2C lcd(0x27, 16, 2); // Usando display 16(lines)x 2(cols) e utilizando a porta de comunicação 0x27
+/* DECLARAÇÃO DE VÁRIAVEIS */
+float ALTURA;
+float PESO;
+float IMC;
 
 /* HEX dos Chars Especiais */
 uint8_t relogio[8] = {0x0, 0xe, 0x15, 0x17, 0x11, 0xe, 0x0};
@@ -30,10 +38,6 @@ uint8_t check[8] = {0x0, 0x1 ,0x3, 0x16, 0x1c, 0x8, 0x0};
 uint8_t weight[9] = {0x0E, 0x0A, 0x04, 0x0E, 0x1F, 0x1F, 0x1F,0x1F};
 uint8_t height[9] = {0x04, 0x0E, 0x1F, 0x04, 0x04, 0x1F, 0x0E, 0x04};
 
-
-/* Presets do Laser (VL53L0X) */
-
-VL53L0X laser; // Instanciando objeto do laser
 
 /* Inicio das Configurações */
 void setup() {
@@ -47,16 +51,24 @@ void setup() {
   lcd.createChar(2, weight);
   lcd.createChar(3, height);
 
-  /* Config da Balanca*/
+  /* Balanca Carregando (Display) */
   lcd.setCursor(1,0);
   lcd.print(" Balanca IMC ");
   lcd.setCursor(0,1);
   lcd.print("Carregando... ");
   lcd.write(0); //simbolo relogio
   
-  escala.begin(pin_dt, pin_sck); ////inicializacao e definicao dos pinos DT e SCK dentro do objeto ESCALA
-  escala.tare(); //zera a escala
-  escala.set_scale(fator_calibracao); //ajusta a escala para o fator de calibracao
+   /* Config da Balanca*/
+  scale.begin(pin_dt, pin_sck); ////inicializacao e definicao dos pinos DT e SCK dentro do objeto ESCALA
+  scale.tare(); //zera a escala (balanca vazia)
+  scale.set_scale(fator_calibracao); //ajusta a escala para o fator de calibracao
+  
+  /* Setup Finalizado (Display) */
+  lcd.clear();
+  lcd.print("Setup");
+  lcd.setCursor(0,1);
+  lcd.print("   Finalizado ");
+  lcd.write(1); //simbolo relogio
   delay(3000);
   lcd.clear();
 
@@ -67,25 +79,34 @@ void setup() {
 }
 
 void loop() {
-    double ALTURA;
-    double PESO;
-    double IMC;
-
   
-  //verifica se o modulo hx711 esta pronto para realizar leitura    
-  if (escala.is_ready()){
+  //verifica se o modulo hx711 esta pronto para realizar leitura
 
-    /* Imprimindo peso no display*/ 
+      
+  if (scale.is_ready()){
+    botao.button_loop(); // escutando o botao;
+
+     /* Evento do Botão */
+   if(botao.pressed()){
+
+   
+   }
+   
+    //Imprimindo peso e altura no display
     lcd.setCursor(1,0);
     lcd.print("Peso: ");
-    lcd.print(escala.get_units(), 1); //retorna a leitura da variavel escala com a unidade quilogramas
+    lcd.print(scale.get_units(), 1); //retorna a leitura da variavel escala com a unidade quilogramas
     lcd.print(" KG ");
     lcd.write(2); //simbolo de peso
     lcd.setCursor(1,1);
-    lcd.print("Alt.: 1.75");
+    lcd.print("Alt.: ");
+    lcd.print(ALTURA);
     lcd.print(" M ");
     lcd.write(3);//simbolo de altura
+
+  
     
+  
   }
   else {
     lcd.setCursor(0,0);
