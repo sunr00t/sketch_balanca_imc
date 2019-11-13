@@ -25,13 +25,13 @@
 HX711 scale; //escala
 LiquidCrystal_I2C lcd(0x27, 16, 2); //lcd (display 16(lines)x 2(cols)) porta de comunicação 0x27
 //VL53L0X laser; //laser
-PushButton botao(pin_btn);
+PushButton botao(pin_btn);  
 
 /* DECLARAÇÃO DE VÁRIAVEIS */
-float ALTURA;
+float ALTURA = 1.5;
 float PESO;
 float IMC;
-
+int contador = 0;
 /* HEX dos Chars Especiais */
 uint8_t relogio[8] = {0x0, 0xe, 0x15, 0x17, 0x11, 0xe, 0x0};
 uint8_t check[8] = {0x0, 0x1 ,0x3, 0x16, 0x1c, 0x8, 0x0};
@@ -80,11 +80,15 @@ void setup() {
   */ 
 }
 
-void loop() {
 
-  botao.button_loop();
+
+void loop() {
+  botao.button_loop();  
   //verifica se o modulo hx711 esta pronto para realizar leitura
   if (scale.is_ready()){ 
+    PESO = scale.get_units();
+    //PESO = (PESO, 2);
+    //ALTURA = (ALTURA, 2);
     //Imprimindo peso e altura no display
     lcd.setCursor(1,0);
     lcd.print("Peso: ");
@@ -93,24 +97,37 @@ void loop() {
     lcd.write(2); //simbolo de peso
     lcd.setCursor(1,1);
     lcd.print("Alt.: ");
-    lcd.print(ALTURA);
+    lcd.print(ALTURA, 2);
     lcd.print(" M ");
-    lcd.write(3);//simbolo de altura
-    
-    if(botao.pressed()){
-    Serial.println("Peso Capturado");
-    Serial.println(scale.get_units(), 1);    
-  }  
+    lcd.write(3);//simbolo de altura 
+      if(botao.pressed()){
+        contador += 1;
+        if (contador > 1){
+            lcd.clear();
+            
+            Serial.println("Peso Capturada pelo botao: ");
+            Serial.println(PESO);
+            Serial.println("Altura Capturado pelo botao: ");
+            Serial.println(ALTURA, 2);
+            float imc;
+            imc = (PESO / (ALTURA * ALTURA));
+            Serial.println("Calculo do IMC: ");
+            Serial.println(imc);
   
-  }
-  else {
+            delay(5000);
+            lcd.clear();
+          }
+      
+        //IMC = getIMC();
+        //lcd.print(IMC);
+        //delay(10000);
+     }
+   } else {
     lcd.setCursor(0,0);
     lcd.print("Calibrando..");
     lcd.setCursor(0,1);
     lcd.print("Aguarde...  ");
     lcd.write(2);
   }
-  delay(tempo_espera); //intervalo de espera para leitura
-  lcd.clear();  
-
+  delay(tempo_espera); //intervalo de espera para leitura  
 }
