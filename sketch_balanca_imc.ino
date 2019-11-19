@@ -19,7 +19,7 @@
 
 /* Presets da Balança */
 #define tempo_espera 100 //constante de espera
-#define fator_calibracao -24830.0f //fator de calibracao (real)
+#define fator_calibracao -24550.0f //fator de calibracao (real)
 //#define fator_calibracao -100.0f //fator de calibracao (ambiente de testes)
 
 /* INSTANCIANDO OS OBJETOS */
