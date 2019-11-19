@@ -10,7 +10,7 @@
 #include <PushButton.h>
 #include <HX711.h>             //lib da balança
 #include <LiquidCrystal_I2C.h> //lib do display
-#include <Ultrasonic.h> //lib do hc-sr04
+#include <Ultrasonic.h>        //lib do hc-sr04
 
 /*Configuração dos Pinos*/
 #define pin_sck 2 // SCK (HX711)
@@ -18,7 +18,7 @@
 #define pin_btn 4 // Botao
 
 /* Presets da Balança */
-#define tempo_espera 100 //constante de espera
+#define tempo_espera 100           //constante de espera
 #define fator_calibracao -24550.0f //fator de calibracao (real)
 //#define fator_calibracao -100.0f //fator de calibracao (ambiente de testes)
 
@@ -26,15 +26,15 @@
 HX711 scale;                        //escala
 LiquidCrystal_I2C lcd(0x27, 16, 2); //lcd (display 16(lines)x 2(cols)) porta de comunicação 0x27
 PushButton botao(pin_btn);
-Ultrasonic sonic(12,13);             //Configura os pinos sensor ultrassônico (Trigger,Echo)
-
+Ultrasonic sonic(12, 13); //Configura os pinos sensor ultrassônico (Trigger,Echo)
 
 /* DECLARAÇÃO DE VÁRIAVEIS */
 int ALTURA;
 float PESO;
 float IMC;
 int contador = 0;
-int distancia;
+//int distancia;
+int alt_max = 205;
 /* HEX dos Chars Especiais */
 uint8_t relogio[8] = {0x0, 0xe, 0x15, 0x17, 0x11, 0xe, 0x0};
 uint8_t check[8] = {0x0, 0x1, 0x3, 0x16, 0x1c, 0x8, 0x0};
@@ -78,29 +78,25 @@ void setup()
 
 void loop()
 {
-  botao.button_loop(); // escutando evento do botao
+  botao.button_loop();  // escutando evento do botao
   if (scale.is_ready()) //verifica se o modulo hx711 esta pronto para realizar leitura
   {
     PESO = scale.get_units();
-    distancia = (sonic.read(CM));
+    ALTURA = (alt_max - sonic.read(CM));
     //Imprimindo peso e altura no display
     lcd.setCursor(0, 0);
     lcd.print("Alt.: ");
-    lcd.print(distancia);    //Exibe no display as medidas
+    lcd.print(ALTURA); //Exibe no display as medidas
     lcd.print("");
-    lcd.print(" cm");
+    lcd.print(" CM");
     lcd.setCursor(13, 0);
     lcd.write(3); //simbolo de altura
-    lcd.setCursor(0, 1);   
+    lcd.setCursor(0, 1);
     lcd.print("Peso: ");
     lcd.print(scale.get_units(), 1); //retorna a leitura da variavel escala com a unidade quilogramas
     lcd.print(" KG");
     lcd.setCursor(13, 1);
     lcd.write(2); //simbolo de peso
-//    lcd.setCursor(0, 1);
-//    lcd.print("Alt.: ");
-//    lcd.print(distancia);
-//    lcd.print(" M");
 
     if (botao.pressed())
     {
@@ -108,14 +104,14 @@ void loop()
       if (contador > 1)
       {
         lcd.clear();
-        IMC = (PESO / (ALTURA * ALTURA));
+        IMC = (PESO / (ALTURA * ALTURA) * 10000);
         lcd.setCursor(0, 0);
         lcd.print("Calculo do IMC: ");
         lcd.setCursor(5, 1);
         lcd.print(IMC);
         lcd.write(1); //simbolo relogio
         delay(6000);
-        
+
         lcd.clear();
         lcd.print("CLASSIFICACAO:");
         lcd.setCursor(0, 1);
