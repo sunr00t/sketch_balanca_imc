@@ -1,8 +1,9 @@
-## Universidade dos Guararapes
+### UniFG - Ciência da Computação
+### Disciplina: Microcontroladores
+### Docente: Marco Guimarães
+
+### Atividade para conclusão da disciplina de Microcontroladores da U2
 ### Projeto: Balança IMC com Arduíno
-##### Curso: Ciência da Computação
-##### Disciplina: Microcontroladores
-##### Docente: Marco Guimarães
 ##### Discentes:
 - Amanda Nascimento - 201700374
 - Bruno A. Nascimento - 201501486
@@ -12,7 +13,7 @@
 - João Pedro - 201702636
 - Luiz Arthur - 201707950
 
-Atividade para conclusão da disciplina de Microcontroladores da U2 componentes utilizados:
+ ### Componentes utilizados:
 
 - Arduíno Uno;
 - Protoboard;
@@ -22,5 +23,9 @@ Atividade para conclusão da disciplina de Microcontroladores da U2 componentes 
 - Módulo Conversor HX711 (p/ células de carga);
 - Pushbotton + Resistor 10k;
 - Sensor Ultrassônico (HC-SR04);
+
+**Esquema Elétrico [Wiring]**
+[Download](https://github.com/sunr00t/sketch_balanca_imc/blob/master/Balanca_IMC_Wiring.pdf) 
+
 
 **Licença: MIT**
