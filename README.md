@@ -5,7 +5,7 @@
 ##### Projeto: Balança IMC com Arduíno
 Atividade para conclusão da disciplina de Microcontroladores da U2
 
-##### Discentes:
+### Discentes:
 - Amanda Nascimento - 201700374
 - Bruno A. Nascimento - 201501486
 - Mateus Henrique - 201702717
