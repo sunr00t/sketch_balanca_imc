@@ -1,9 +1,10 @@
-### UniFG - Ciência da Computação
-### Disciplina: Microcontroladores
-### Docente: Marco Guimarães
+# UniFG - Ciência da Computação
+##### Disciplina: Microcontroladores
+##### Docente: Marco Guimarães
 
-### Atividade para conclusão da disciplina de Microcontroladores da U2
-### Projeto: Balança IMC com Arduíno
+##### Projeto: Balança IMC com Arduíno
+Atividade para conclusão da disciplina de Microcontroladores da U2
+
 ##### Discentes:
 - Amanda Nascimento - 201700374
 - Bruno A. Nascimento - 201501486
